@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BH Family Control</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --sky:#C8E6F5;--sky2:#A8D4EE;
+  --rose:#F5D6E0;--rose2:#EDB8CA;
+  --lilac:#E2D6F5;--lilac2:#C8B8EA;
+  --mint:#D0EEE6;--mint2:#A8DDD0;
+  --peach:#FAE8D8;
+  --blue:#4A90C4;--blue-d:#2D6A9A;
+  --pink:#C46A8A;--purple:#7A68B0;--teal:#3A9E85;
+  --text:#2A2D3A;--text2:#5A5E70;--text3:#9A9EAE;
+  --white:#FFFFFF;--bg:#F7F4F0;
+  --r:20px;--r2:14px;--r3:28px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',sans-serif;color:var(--text);display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#C8E6F5 0%,#E2D6F5 50%,#F5D6E0 100%);transition:opacity .7s ease}
+#splash.out{opacity:0;pointer-events:none}
+.splash-logo{font-family:'DM Serif Display',serif;font-size:2.6rem;color:var(--blue-d);letter-spacing:-.5px;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both}
+.splash-tag{font-size:.9rem;color:var(--text2);margin-top:8px;font-weight:400;animation:popIn .6s .15s cubic-bezier(.34,1.56,.64,1) both}
+.splash-dots{display:flex;gap:8px;margin-top:32px;animation:popIn .6s .3s both}
+.splash-dots span{width:8px;height:8px;border-radius:50%;background:var(--blue);opacity:.4}
+.splash-dots span:nth-child(1){animation:blink 1.2s 0s infinite}
+.splash-dots span:nth-child(2){animation:blink 1.2s .2s infinite}
+.splash-dots span:nth-child(3){animation:blink 1.2s .4s infinite}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.85) translateY(10px)}to{opacity:1;transform:none}}
+
+/* HEADER */
+.header{flex-shrink:0;padding:16px 20px 12px;background:var(--white);border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--blue-d)}
+.header-logo span{color:var(--pink)}
+.header-right{display:flex;gap:6px}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:background .2s}
+.icon-btn:hover{background:var(--sky)}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:72px;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{width:3px}
+.scroll::-webkit-scrollbar-thumb{background:var(--sky2);border-radius:2px}
+
+/* BOTTOM NAV */
+.bnav{flex-shrink:0;background:var(--white);border-top:1px solid rgba(0,0,0,.07);display:flex;padding:8px 0 8px;z-index:100}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;cursor:pointer;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:500;padding:6px 2px;transition:color .2s;position:relative}
+.bnav-btn .ni{font-size:1.3rem;line-height:1}
+.bnav-btn.on{color:var(--blue)}
+.bnav-btn.on::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--blue);border-radius:0 0 3px 3px}
+
+/* SCREENS */
+.screen{display:none;animation:fadeUp .28s ease both}
+.screen.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* HERO */
+.hero{margin:16px 16px 8px;border-radius:var(--r3);padding:28px 24px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--sky) 0%,var(--lilac) 60%,var(--rose) 100%)}
+.hero::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.18);top:-60px;right:-50px}
+.hero-tag{font-size:.7rem;font-weight:600;letter-spacing:.08em;color:var(--blue-d);text-transform:uppercase;margin-bottom:6px;opacity:.75}
+.hero-title{font-family:'DM Serif Display',serif;font-size:1.7rem;line-height:1.25;color:var(--text);margin-bottom:8px}
+.hero-title em{color:var(--blue-d);font-style:normal}
+.hero-sub{font-size:.82rem;color:var(--text2);line-height:1.65;max-width:280px}
+.hero-date{font-size:.72rem;color:var(--text3);margin-top:12px;font-weight:500}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-bottom:12px}
+.main-card{border-radius:var(--r);padding:20px 16px;cursor:pointer;border:none;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;min-height:120px}
+.main-card:active{transform:scale(.97)}
+.main-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.main-card .card-ico{font-size:1.6rem;line-height:1}
+.main-card .card-name{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);line-height:1.25;margin-top:auto}
+.main-card .card-hint{font-size:.72rem;color:var(--text2);line-height:1.4;margin-top:2px}
+.mc-sky{background:linear-gradient(140deg,var(--sky),var(--sky2))}
+.mc-rose{background:linear-gradient(140deg,var(--rose),var(--rose2))}
+.mc-lilac{background:linear-gradient(140deg,var(--lilac),var(--lilac2))}
+.mc-mint{background:linear-gradient(140deg,var(--mint),var(--mint2))}
+
+/* SECTION */
+.sec{padding:0 16px;margin-bottom:20px}
+.sec-title{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:12px}
+.sec-hint{font-size:.8rem;color:var(--text3);margin-bottom:14px;line-height:1.6}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--r);padding:20px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);margin-bottom:4px}
+.card-body{font-size:.82rem;color:var(--text2);line-height:1.65}
+
+/* INPUTS */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.75rem;font-weight:600;color:var(--text2);margin-bottom:5px;letter-spacing:.02em}
+.field input,.field textarea,.field select{width:100%;padding:12px 14px;border:1.5px solid rgba(0,0,0,.1);border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s,background .2s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue);background:#fff}
+.field textarea{resize:vertical;min-height:80px}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 20px;border-radius:var(--r2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.9rem;transition:transform .2s,box-shadow .2s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 4px 16px rgba(74,144,196,.3)}
+.btn-green{background:linear-gradient(135deg,var(--teal),#2D8A70);color:#fff;box-shadow:0 4px 16px rgba(58,158,133,.3)}
+.btn-red{background:linear-gradient(135deg,#E05C5C,#C43A3A);color:#fff;animation:rglow 2.5s infinite}
+@keyframes rglow{0%,100%{box-shadow:0 4px 16px rgba(224,92,92,.35)}50%{box-shadow:0 4px 24px rgba(224,92,92,.6)}}
+.btn-outline{background:transparent;border:1.5px solid rgba(0,0,0,.15);color:var(--text2)}
+.btn-ghost{background:rgba(74,144,196,.1);color:var(--blue-d);width:auto;padding:10px 18px;border-radius:var(--r2)}
+.btn-sm{padding:10px 16px;font-size:.82rem;width:auto}
+
+/* BACK */
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text3);background:none;border:none;cursor:pointer;padding:14px 16px 0;font-family:'DM Sans',sans-serif;font-weight:500}
+.back:hover{color:var(--blue)}
+
+/* BIG BUTTON */
+.big-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--mint),var(--mint2));border-radius:var(--r3);padding:40px 24px;border:none;cursor:pointer;width:100%;transition:transform .2s;box-shadow:0 4px 20px rgba(58,158,133,.2);gap:12px}
+.big-btn:active{transform:scale(.97)}
+.big-btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(58,158,133,.3)}
+.big-btn .big-ico{font-size:3.5rem;animation:heartbeat 2s infinite}
+.big-btn .big-label{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text)}
+.big-btn .big-hint{font-size:.8rem;color:var(--text2)}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}}
+
+/* SOS */
+.sos-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#E05C5C,#C43A3A);border-radius:var(--r3);padding:32px 24px;border:none;cursor:pointer;width:100%;box-shadow:0 6px 24px rgba(224,92,92,.4);gap:10px;transition:transform .2s;animation:sos-pulse 2.5s infinite}
+.sos-btn:active{transform:scale(.96)}
+@keyframes sos-pulse{0%,100%{box-shadow:0 6px 24px rgba(224,92,92,.4)}50%{box-shadow:0 8px 32px rgba(224,92,92,.65)}}
+.sos-btn .sos-ico{font-size:3rem}
+.sos-btn .sos-label{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#fff}
+.sos-btn .sos-hint{font-size:.78rem;color:rgba(255,255,255,.85)}
+
+/* STATUS */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.status-item{background:var(--bg);border-radius:var(--r2);padding:16px 12px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.status-item:active{transform:scale(.96)}
+.status-item.on{background:var(--mint);border-color:var(--teal)}
+.status-item .si{font-size:1.8rem;display:block;margin-bottom:6px}
+.status-item .sl{font-size:.75rem;font-weight:600;color:var(--text2)}
+
+/* CHECKLIST */
+.cl-item{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--bg);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:background .2s;border:1.5px solid transparent}
+.cl-item.done{background:var(--mint);border-color:var(--mint2)}
+.cl-box{width:24px;height:24px;border-radius:7px;border:2px solid rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;transition:all .2s;font-size:.85rem}
+.cl-item.done .cl-box{background:var(--teal);border-color:var(--teal);color:#fff}
+.cl-label{font-size:.88rem;font-weight:500;color:var(--text);flex:1}
+.cl-ico{font-size:1.1rem}
+
+/* AGENDA ITEM */
+.ag-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border-radius:var(--r2);margin-bottom:8px}
+.ag-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ag-info{flex:1}
+.ag-title{font-size:.88rem;font-weight:600;color:var(--text)}
+.ag-date{font-size:.73rem;color:var(--text3);margin-top:2px}
+.ag-del{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--text3);padding:4px;opacity:.6}
+.ag-del:hover{opacity:1}
+
+/* ORIENTACOES */
+.orient-row{background:var(--bg);border-radius:var(--r2);margin-bottom:8px;overflow:hidden;border:1.5px solid transparent;transition:border-color .2s}
+.orient-row.open{border-color:var(--sky2)}
+.orient-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;color:var(--text)}
+.orient-body{display:none;padding:0 16px 14px;font-size:.82rem;color:var(--text2);line-height:1.7}
+.orient-row.open .orient-body{display:block}
+.alert-chip{display:inline-block;background:var(--peach);color:#A05010;font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:20px;margin-top:8px}
+.warn-strip{background:var(--peach);border-left:3px solid #E8A050;border-radius:var(--r2);padding:10px 14px;font-size:.78rem;color:#804A10;font-weight:500;margin-bottom:16px;line-height:1.5}
+
+/* CHAT */
+.chat-window{background:var(--bg);border-radius:var(--r);padding:16px;height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.chat-window::-webkit-scrollbar{width:3px}
+.chat-window::-webkit-scrollbar-thumb{background:var(--sky2);border-radius:2px}
+.bubble{max-width:85%;padding:10px 14px;border-radius:16px;font-size:.84rem;line-height:1.6;animation:popIn .25s ease;white-space:pre-wrap}
+.bubble.bot{background:linear-gradient(135deg,var(--sky),var(--lilac));color:var(--text);border-bottom-left-radius:4px;align-self:flex-start}
+.bubble.user{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.bubble.typing{opacity:.6}
+.chat-input-row{display:flex;gap:8px}
+.chat-input-row input{flex:1;padding:11px 14px;border:1.5px solid rgba(0,0,0,.1);border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);background:#fff;outline:none}
+.chat-input-row input:focus{border-color:var(--blue)}
+.chat-send{padding:11px 16px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:var(--r2);color:#fff;cursor:pointer;font-size:.9rem;flex-shrink:0}
+.chat-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chat-quick button{background:var(--white);border:1.5px solid rgba(74,144,196,.25);border-radius:20px;padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:.73rem;color:var(--blue-d);cursor:pointer;transition:all .2s;font-weight:500}
+.chat-quick button:hover{background:var(--sky);border-color:var(--sky2)}
+
+/* BREATH */
+.breath-center{text-align:center;padding:24px 16px}
+.breath-orb{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--lilac),var(--rose));margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;animation:breathe 5s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.15);opacity:1}}
+.breath-step{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:6px}
+.breath-inst{font-size:.8rem;color:var(--text3)}
+
+/* PHRASE CARD */
+.phrases-card{background:linear-gradient(135deg,var(--lilac),var(--rose));border-radius:var(--r);padding:20px;text-align:center;margin-bottom:12px}
+.phrases-card .pq{font-size:.72rem;color:var(--purple);font-weight:600;letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase}
+.phrases-card .pt{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text);line-height:1.5}
+.phrases-card .refresh-btn{background:rgba(255,255,255,.5);border:none;border-radius:20px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;color:var(--purple);cursor:pointer;margin-top:12px}
+
+/* CONTACT HERO */
+.contact-hero{background:linear-gradient(135deg,var(--blue-d),var(--purple));border-radius:var(--r);padding:24px;color:#fff;margin-bottom:16px}
+.contact-hero h3{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:8px}
+.contact-hero p{font-size:.82rem;opacity:.88;line-height:1.65}
+
+/* TOAST */
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:11px 20px;border-radius:30px;font-size:.82rem;font-weight:500;z-index:999;opacity:0;transition:opacity .3s,transform .3s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* UTILITIES */
+.muted{font-size:.8rem;color:var(--text3);line-height:1.6}
+.center{text-align:center}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.bold{font-weight:600}
+.divider{height:1px;background:rgba(0,0,0,.06);margin:12px 0}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">BH Family</div>
+  <div class="splash-tag">Organização · Segurança · Tranquilidade</div>
+  <div class="splash-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">BH <span>Family</span></div>
+  <div class="header-right">
+    <button class="icon-btn" onclick="showScreen('duvidas')" title="Duvidas">💬</button>
+    <button class="icon-btn" onclick="showScreen('contato')" title="Contato">✉️</button>
+  </div>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll" id="mainScroll">
+
+  <!-- HOME -->
+  <div class="screen on" id="s-home">
+    <div class="hero">
+      <div class="hero-tag">Bem-vindo(a)</div>
+      <div class="hero-title" id="heroGreet">Olá! <em>Como podemos ajudar hoje?</em></div>
+      <div class="hero-sub">O BH Family Control ajuda sua família a manter a rotina organizada, aumentar a segurança no dia a dia e facilitar momentos corridos com ferramentas simples e inteligentes.</div>
+      <div class="hero-date" id="heroDate"></div>
+    </div>
+
+    <div class="grid2" style="margin-top:16px">
+      <button class="main-card mc-sky" onclick="showScreen('seguranca')">
+        <div class="card-ico">🛡️</div>
+        <div>
+          <div class="card-name">Segurança</div>
+          <div class="card-hint">SOS, status e emergências</div>
+        </div>
+      </button>
+      <button class="main-card mc-rose" onclick="showScreen('rotina')">
+        <div class="card-ico">📅</div>
+        <div>
+          <div class="card-name">Rotina</div>
+          <div class="card-hint">Agenda e checklist</div>
+        </div>
+      </button>
+      <button class="main-card mc-mint" onclick="showScreen('criancas')">
+        <div class="card-ico">👶</div>
+        <div>
+          <div class="card-name">Crianças</div>
+          <div class="card-hint">Informações e saúde</div>
+        </div>
+      </button>
+      <button class="main-card mc-lilac" onclick="showScreen('duvidas')">
+        <div class="card-ico">💬</div>
+        <div>
+          <div class="card-name">Dúvidas</div>
+          <div class="card-hint">Assistente inteligente</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="sec mt8">
+      <div class="card" style="background:linear-gradient(140deg,var(--sky),var(--mint));box-shadow:none;display:flex;align-items:center;gap:14px;cursor:pointer;border:none;padding:20px" onclick="showScreen('chegou')">
+        <div style="font-size:2.2rem;flex-shrink:0">✅</div>
+        <div>
+          <div class="card-title">Cheguei Bem</div>
+          <div class="card-body">Avise rapidamente que chegou em segurança pelo WhatsApp.</div>
+        </div>
+      </div>
+
+      <div class="card" style="background:linear-gradient(140deg,var(--rose),var(--lilac));box-shadow:none;display:flex;align-items:center;gap:14px;cursor:pointer;border:none;padding:20px" onclick="showScreen('respira')">
+        <div style="font-size:2.2rem;flex-shrink:0">🌸</div>
+        <div>
+          <div class="card-title">Mãe / Pai, Respira</div>
+          <div class="card-body" style="font-size:.78rem">Você não precisa lembrar de tudo sozinho(a). 💙</div>
+        </div>
+      </div>
+
+      <button class="btn mt8" style="background:linear-gradient(135deg,#F5A020,#E07010);color:#fff;box-shadow:0 4px 16px rgba(240,130,20,.3);margin-bottom:8px" onclick="modoCorreria()">
+        😵 Meu dia virou caos!
+      </button>
+    </div>
+  </div>
+
+  <!-- SEGURANÇA -->
+  <div class="screen" id="s-seguranca">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">🛡️ Segurança</div>
+      <div class="sec-hint">Ferramentas rápidas para proteger sua família. Use o botão SOS em emergências ou veja onde cada um está agora.</div>
+
+      <button class="sos-btn mb12" onclick="emergencia()" style="margin-bottom:12px">
+        <div class="sos-ico">🆘</div>
+        <div class="sos-label">Preciso de Ajuda Agora</div>
+        <div class="sos-hint">Envia localização e alerta via WhatsApp</div>
+      </button>
+
+      <div class="card">
+        <div class="card-title">📍 Onde está cada um?</div>
+        <div class="card-body">Toque para atualizar o status da família.</div>
+        <div class="status-grid mt12" id="statusGrid">
+          <div class="status-item" onclick="toggleStatus(this,'casa')">
+            <span class="si">🏠</span><div class="sl">Em Casa</div>
+          </div>
+          <div class="status-item" onclick="toggleStatus(this,'escola')">
+            <span class="si">🏫</span><div class="sl">Na Escola</div>
+          </div>
+          <div class="status-item" onclick="toggleStatus(this,'curso')">
+            <span class="si">📚</span><div class="sl">No Curso</div>
+          </div>
+          <div class="status-item" onclick="toggleStatus(this,'viagem')">
+            <span class="si">🚗</span><div class="sl">Em Trânsito</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📞 Contatos de Emergência</div>
+        <div class="card-body">Guarde aqui quem deve ser acionado em situação urgente.</div>
+        <div class="mt12">
+          <div class="field"><label>Nome</label><input id="eName" placeholder="Ex: Avo Maria, Tio Joao..."/></div>
+          <div class="field"><label>WhatsApp</label><input type="tel" id="eTel" placeholder="Ex: 31999999999"/></div>
+          <button class="btn btn-outline btn-sm" onclick="addEmerg()" style="margin-bottom:12px">+ Adicionar Contato</button>
+          <div id="emergList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROTINA -->
+  <div class="screen" id="s-rotina">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">📅 Rotina</div>
+      <div class="sec-hint">Organize sua agenda familiar e o checklist da mochila. Nunca mais esqueça nada importante.</div>
+
+      <div class="card">
+        <div class="card-title">📋 Agenda Familiar</div>
+        <div class="card-body">Vacinas, consultas, escola, remedios — tudo num lugar so.</div>
+        <div class="mt12">
+          <div class="field"><label>Compromisso</label><input id="agTitle" placeholder="Ex: Consulta pediatra, Vacina..."/></div>
+          <div class="field"><label>Data e Hora</label><input type="datetime-local" id="agDate"/></div>
+          <div class="field">
+            <label>Categoria</label>
+            <select id="agCat">
+              <option value="medico">Medico</option>
+              <option value="escola">Escola</option>
+              <option value="vacina">Vacina</option>
+              <option value="remedio">Remedio</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="addAgenda()">+ Adicionar Compromisso</button>
+        </div>
+        <div class="divider"></div>
+        <div id="agendaList" class="mt8">
+          <div class="muted center" style="padding:12px">Nenhum compromisso ainda</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎒 Checklist da Mochila</div>
+        <div class="card-body">Organize rapidamente o que seu filho precisa levar e evite esquecimentos.</div>
+        <div class="mt12">
+          <div class="field"><label>Idade da crianca</label><input type="number" id="ckIdade" placeholder="Ex: 8" min="1" max="18"/></div>
+          <div class="field">
+            <label>Periodo</label>
+            <select id="ckPer">
+              <option value="manha">Manha</option>
+              <option value="tarde">Tarde</option>
+              <option value="integral">Integral</option>
+            </select>
+          </div>
+          <div class="field"><label>Atividades extras (opcional)</label><input id="ckAtiv" placeholder="natacao, ingles, judo..."/></div>
+          <button class="btn btn-ghost" onclick="gerarChecklist()">Gerar Checklist</button>
+        </div>
+        <div id="ckResult" class="mt12"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRIANCAS -->
+  <div class="screen" id="s-criancas">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">👶 Criancas</div>
+      <div class="sec-hint">Guarde as informacoes mais importantes dos seus filhos e acesse orientacoes de saude rapidas.</div>
+
+      <div class="card">
+        <div class="card-title">📋 Perfil do Filho(a)</div>
+        <div class="card-body">Informacoes essenciais para ter sempre a mao.</div>
+        <div class="mt12">
+          <div class="field"><label>Nome</label><input id="cNome" placeholder="Nome da crianca"/></div>
+          <div class="field"><label>Data de Nascimento</label><input type="date" id="cNasc"/></div>
+          <div class="field"><label>Escola</label><input id="cEscola" placeholder="Nome da escola e periodo"/></div>
+          <div class="field"><label>Alergias</label><textarea id="cAlerg" placeholder="Ex: amendoim, dipirona, latex..."></textarea></div>
+          <div class="field"><label>Medicamentos em uso</label><textarea id="cMed" placeholder="Nome, dose e horario..."></textarea></div>
+          <div class="field"><label>Observacoes</label><textarea id="cObs" placeholder="Outros detalhes importantes..."></textarea></div>
+          <button class="btn btn-primary" onclick="salvarCrianca()">Salvar Informacoes</button>
+          <div id="criancaSavedMsg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Orientacoes de Saude</div>
+        <div class="warn-strip mt8">Estas informacoes sao educativas e nao substituem avaliacao medica profissional.</div>
+        <div id="orientList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHEGOU BEM -->
+  <div class="screen" id="s-chegou">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">✅ Cheguei Bem</div>
+      <div class="sec-hint">Use este botao para avisar rapidamente sua familia quando chegar em seguranca. Simples e rapido.</div>
+
+      <button class="big-btn mb12" onclick="chegouBem()" style="margin-bottom:12px">
+        <div class="big-ico">✅</div>
+        <div class="big-label">Cheguei Bem</div>
+        <div class="big-hint">Toque para enviar mensagem pelo WhatsApp</div>
+      </button>
+
+      <div class="card">
+        <div class="card-title">Personalizar</div>
+        <div class="card-body">Configure para quem a mensagem sera enviada.</div>
+        <div class="mt12">
+          <div class="field"><label>Seu nome (opcional)</label><input id="chegNome" placeholder="Como voce quer se identificar?"/></div>
+          <div class="field"><label>WhatsApp de destino</label><input type="tel" id="chegWpp" placeholder="Ex: 31999999999 (sem espaco)"/></div>
+        </div>
+        <div style="background:var(--mint);border-radius:var(--r2);padding:14px">
+          <div class="muted" style="font-size:.78rem">Mensagem que sera enviada:</div>
+          <div class="mt8 bold" style="font-size:.88rem">Oi! Cheguei bem - BH Family Control</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Incluir Localizacao</div>
+        <div class="card-body">Adicione sua localizacao atual a mensagem para mais tranquilidade.</div>
+        <button class="btn btn-green mt12" onclick="chegouComLocal()">Cheguei Bem + Localizacao</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DUVIDAS -->
+  <div class="screen" id="s-duvidas">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">💬 Tenho Duvidas</div>
+      <div class="sec-hint">Pergunte qualquer coisa sobre o sistema. Estamos aqui para ajudar de forma simples e humana.</div>
+
+      <div class="card" style="padding:16px">
+        <div class="chat-quick" id="quickQuestions">
+          <button onclick="askChat('Como usar o botao de emergencia?')">SOS</button>
+          <button onclick="askChat('Como funciona o Chegou Bem?')">Chegou Bem</button>
+          <button onclick="askChat('Como adicionar um compromisso?')">Agenda</button>
+          <button onclick="askChat('O que e o Modo Correria?')">Correria</button>
+          <button onclick="askChat('Como salvar dados do meu filho?')">Criancas</button>
+          <button onclick="askChat('Como pedir personalizacao?')">Personalizar</button>
+        </div>
+        <div class="chat-window" id="chatWindow"></div>
+        <div class="chat-input-row">
+          <input id="chatInput" placeholder="Escreva sua pergunta..." onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" onclick="sendChat()">&#10148;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESPIRA -->
+  <div class="screen" id="s-respira">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="sec-title">🌸 Mae / Pai, Respira</div>
+      <div class="sec-hint">Um espaco so seu. Para quando o dia ficar pesado e voce precisar de um momento de calma.</div>
+
+      <div class="phrases-card">
+        <div class="pq">Mensagem para voce</div>
+        <div class="pt" id="breathPhrase">Voce esta fazendo o melhor que pode. E isso e o suficiente.</div>
+        <button class="refresh-btn" onclick="newPhrase()">Nova mensagem</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Respira com a gente</div>
+        <div class="card-body">Faca isso quando sentir o dia pesado. So 30 segundos.</div>
+        <div class="breath-center mt8">
+          <div class="breath-orb" id="breathOrb">😌</div>
+          <div class="breath-step" id="breathStep">Toque para começar</div>
+          <div class="breath-inst" id="breathInst">Exercicio de respiracao guiado</div>
+        </div>
+        <button class="btn btn-primary mt12" onclick="toggleBreath()" id="breathBtn">Iniciar</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quais sao suas 3 prioridades agora?</div>
+        <div class="card-body">Escreva e vamos organizar juntos. Uma coisa de cada vez.</div>
+        <div class="field mt12"><textarea id="prioTxt" placeholder="Escreva aqui o que esta te preocupando..." rows="3"></textarea></div>
+        <button class="btn btn-primary" onclick="reorganizar()">Organizar Agora</button>
+        <div id="prioResult" class="mt12"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTATO -->
+  <div class="screen" id="s-contato">
+    <button class="back" onclick="goBack()">← Voltar</button>
+    <div class="sec mt12">
+      <div class="contact-hero">
+        <h3>Vamos criar algo personalizado?</h3>
+        <p>Precisa adaptar o sistema para sua familia ou empresa? Podemos criar algo sob medida para a sua realidade.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Fale conosco</div>
+        <div class="card-body">Preencha abaixo e entraremos em contato rapidamente.</div>
+        <div class="mt12">
+          <div class="field"><label>Seu nome</label><input id="ctNome" placeholder="Como podemos te chamar?"/></div>
+          <div class="field"><label>WhatsApp</label><input type="tel" id="ctWpp" placeholder="Ex: 31999999999"/></div>
+          <div class="field"><label>Email (opcional)</label><input type="email" id="ctEmail" placeholder="seu@email.com"/></div>
+          <div class="field">
+            <label>O que voce precisa?</label>
+            <select id="ctTipo">
+              <option>Personalizar o sistema para minha familia</option>
+              <option>Sistema para minha empresa</option>
+              <option>Adicionar novas funcionalidades</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field"><label>Conte mais</label><textarea id="ctMsg" placeholder="Descreva o que voce precisa..." rows="4"></textarea></div>
+          <button class="btn btn-primary" onclick="enviarContato()">Solicitar Personalizacao</button>
+        </div>
+      </div>
+
+      <div class="card" style="background:linear-gradient(135deg,var(--sky),var(--lilac));box-shadow:none;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:8px">💙</div>
+        <div class="muted" style="font-size:.82rem;line-height:1.7">
+          <span class="bold" style="color:var(--blue-d)">Atendimento humano e personalizado.</span><br>
+          Cada familia e unica. Por isso cada solucao tambem e.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /scroll -->
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="bnav-btn on" id="bn-home" onclick="showScreen('home')">
+    <span class="ni">🏠</span><span>Inicio</span>
+  </button>
+  <button class="bnav-btn" id="bn-seguranca" onclick="showScreen('seguranca')">
+    <span class="ni">🛡️</span><span>Seguranca</span>
+  </button>
+  <button class="bnav-btn" id="bn-rotina" onclick="showScreen('rotina')">
+    <span class="ni">📅</span><span>Rotina</span>
+  </button>
+  <button class="bnav-btn" id="bn-criancas" onclick="showScreen('criancas')">
+    <span class="ni">👶</span><span>Criancas</span>
+  </button>
+  <button class="bnav-btn" id="bn-duvidas" onclick="showScreen('duvidas')">
+    <span class="ni">💬</span><span>Duvidas</span>
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STORAGE HELPERS
+// ============================================================
+var Store = {
+  get: function(key) {
+    try { return JSON.parse(localStorage.getItem(key)); } catch(e) { return null; }
+  },
+  set: function(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+  }
+};
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+var navHistory = [];
+
+function showScreen(name) {
+  var prev = document.querySelector('.screen.on');
+  if (prev) {
+    var prevId = prev.id.replace('s-', '');
+    if (prevId !== name) navHistory.push(prevId);
+    prev.classList.remove('on');
+  }
+  var el = document.getElementById('s-' + name);
+  if (!el) return;
+  el.classList.add('on');
+  document.getElementById('mainScroll').scrollTop = 0;
+
+  document.querySelectorAll('.bnav-btn').forEach(function(b) { b.classList.remove('on'); });
+  var nb = document.getElementById('bn-' + name);
+  if (nb) nb.classList.add('on');
+
+  if (name === 'rotina')    renderAgenda();
+  if (name === 'criancas')  { loadCrianca(); renderOrient(); }
+  if (name === 'seguranca') { loadStatus(); renderEmerg(); }
+  if (name === 'duvidas')   initChat();
+  if (name === 'respira')   newPhrase();
+}
+
+function goBack() {
+  var prev = navHistory.pop() || 'home';
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('on'); });
+  var el = document.getElementById('s-' + prev);
+  if (el) el.classList.add('on');
+  document.querySelectorAll('.bnav-btn').forEach(function(b) { b.classList.remove('on'); });
+  var nb = document.getElementById('bn-' + prev);
+  if (nb) nb.classList.add('on');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2600);
+}
+
+// ============================================================
+// HERO
+// ============================================================
+function initHero() {
+  var h = new Date().getHours();
+  var greet;
+  if (h < 12) {
+    greet = 'Bom dia!';
+  } else if (h < 18) {
+    greet = 'Boa tarde!';
+  } else {
+    greet = 'Boa noite!';
+  }
+  var hEl = document.getElementById('heroGreet');
+  if (hEl) {
+    hEl.innerHTML = greet + ' <em>Como podemos ajudar hoje?</em>';
+  }
+  var d = new Date();
+  var dateEl = document.getElementById('heroDate');
+  if (dateEl) {
+    dateEl.textContent = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+}
+
+// ============================================================
+// CHEGOU BEM
+// ============================================================
+function chegouBem() {
+  var nome = document.getElementById('chegNome').value.trim();
+  var wpp  = document.getElementById('chegWpp').value.replace(/\D/g, '');
+  var texto = 'Oi! Cheguei bem';
+  if (nome) { texto += ' - ' + nome; }
+  texto += '\nEnviado pelo BH Family Control';
+  var msg = encodeURIComponent(texto);
+  var url = wpp ? ('https://wa.me/55' + wpp + '?text=' + msg) : ('https://wa.me/?text=' + msg);
+  window.open(url, '_blank');
+  toast('Abrindo WhatsApp!');
+}
+
+function chegouComLocal() {
+  if (!navigator.geolocation) { toast('GPS indisponivel neste dispositivo'); return; }
+  navigator.geolocation.getCurrentPosition(
+    function(p) {
+      var nome = document.getElementById('chegNome').value.trim();
+      var wpp  = document.getElementById('chegWpp').value.replace(/\D/g, '');
+      var la   = p.coords.latitude;
+      var lo   = p.coords.longitude;
+      var texto = 'Oi! Cheguei bem';
+      if (nome) { texto += ' - ' + nome; }
+      texto += '\nMinha localizacao: https://maps.google.com/?q=' + la + ',' + lo;
+      texto += '\nEnviado pelo BH Family Control';
+      var msg = encodeURIComponent(texto);
+      var url = wpp ? ('https://wa.me/55' + wpp + '?text=' + msg) : ('https://wa.me/?text=' + msg);
+      window.open(url, '_blank');
+      toast('Localizacao incluida!');
+    },
+    function() { toast('Nao foi possivel obter localizacao'); }
+  );
+}
+
+// ============================================================
+// EMERGENCIA
+// ============================================================
+function emergencia() {
+  function sendSOS(loc) {
+    var texto = 'PRECISO DE AJUDA AGORA!\n';
+    if (loc) { texto += 'Minha localizacao: ' + loc + '\n'; }
+    texto += 'BH Family Control';
+    var msg = encodeURIComponent(texto);
+    window.open('https://wa.me/?text=' + msg, '_blank');
+  }
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(p) {
+        sendSOS('https://maps.google.com/?q=' + p.coords.latitude + ',' + p.coords.longitude);
+      },
+      function() { sendSOS(''); }
+    );
+  } else {
+    sendSOS('');
+  }
+}
+
+// ============================================================
+// STATUS
+// ============================================================
+function toggleStatus(el, name) {
+  var was = el.classList.contains('on');
+  document.querySelectorAll('.status-item').forEach(function(c) { c.classList.remove('on'); });
+  if (!was) {
+    el.classList.add('on');
+    Store.set('status', name);
+    var label = el.querySelector('.sl');
+    toast(label ? label.textContent : 'Status atualizado');
+  } else {
+    Store.set('status', null);
+  }
+}
+
+function loadStatus() {
+  var s = Store.get('status');
+  if (!s) return;
+  var map = { casa: 0, escola: 1, curso: 2, viagem: 3 };
+  var idx = map[s];
+  if (idx !== undefined) {
+    var items = document.querySelectorAll('.status-item');
+    if (items[idx]) items[idx].classList.add('on');
+  }
+}
+
+// ============================================================
+// CONTATOS EMERGENCIA
+// ============================================================
+function renderEmerg() {
+  var list = Store.get('emergList') || [];
+  var el   = document.getElementById('emergList');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = ''; return; }
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var c = list[i];
+    html += '<div class="ag-item">';
+    html += '<span style="font-size:1.3rem">&#128100;</span>';
+    html += '<div class="ag-info">';
+    html += '<div class="ag-title">' + escHtml(c.n) + '</div>';
+    html += '<div class="ag-date">' + escHtml(c.t) + '</div>';
+    html += '</div>';
+    html += '<button class="ag-del" onclick="delEmerg(' + i + ')">&#128465;</button>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function addEmerg() {
+  var n = document.getElementById('eName').value.trim();
+  var t = document.getElementById('eTel').value.trim();
+  if (!n || !t) { toast('Preencha nome e WhatsApp'); return; }
+  var list = Store.get('emergList') || [];
+  list.push({ n: n, t: t });
+  Store.set('emergList', list);
+  document.getElementById('eName').value = '';
+  document.getElementById('eTel').value  = '';
+  renderEmerg();
+  toast('Contato salvo!');
+}
+
+function delEmerg(i) {
+  var list = Store.get('emergList') || [];
+  list.splice(i, 1);
+  Store.set('emergList', list);
+  renderEmerg();
+  toast('Removido!');
+}
+
+// ============================================================
+// AGENDA
+// ============================================================
+var AG_COLORS = { medico: 'var(--blue)', escola: 'var(--teal)', vacina: 'var(--mint2)', remedio: 'var(--purple)', outros: 'var(--text3)' };
+var AG_LABELS = { medico: 'Medico', escola: 'Escola', vacina: 'Vacina', remedio: 'Remedio', outros: 'Outros' };
+
+function renderAgenda() {
+  var list = Store.get('agenda') || [];
+  var el   = document.getElementById('agendaList');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = '<div class="muted center" style="padding:12px">Nenhum compromisso ainda</div>';
+    return;
+  }
+  var sorted = list.slice().sort(function(a, b) { return new Date(a.d) - new Date(b.d); });
+  var html = '';
+  for (var i = 0; i < sorted.length; i++) {
+    var item = sorted[i];
+    var dt   = '';
+    try { dt = new Date(item.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch(e) { dt = item.d; }
+    var color = AG_COLORS[item.c] || 'var(--blue)';
+    var label = AG_LABELS[item.c] || item.c;
+    html += '<div class="ag-item">';
+    html += '<div class="ag-dot" style="background:' + color + '"></div>';
+    html += '<div class="ag-info">';
+    html += '<div class="ag-title">[' + label + '] ' + escHtml(item.t) + '</div>';
+    html += '<div class="ag-date">' + dt + '</div>';
+    html += '</div>';
+    html += '<button class="ag-del" onclick="delAg(' + i + ')">&#128465;</button>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function addAgenda() {
+  var t = document.getElementById('agTitle').value.trim();
+  var d = document.getElementById('agDate').value;
+  var c = document.getElementById('agCat').value;
+  if (!t || !d) { toast('Preencha titulo e data'); return; }
+  var list = Store.get('agenda') || [];
+  list.push({ t: t, d: d, c: c });
+  Store.set('agenda', list);
+  document.getElementById('agTitle').value = '';
+  document.getElementById('agDate').value  = '';
+  renderAgenda();
+  toast('Compromisso adicionado!');
+}
+
+function delAg(i) {
+  var list = Store.get('agenda') || [];
+  list.splice(i, 1);
+  Store.set('agenda', list);
+  renderAgenda();
+  toast('Removido!');
+}
+
+// ============================================================
+// CHECKLIST
+// ============================================================
+function gerarChecklist() {
+  var idadeVal = document.getElementById('ckIdade').value;
+  var idade    = parseInt(idadeVal, 10) || 8;
+  var per      = document.getElementById('ckPer').value;
+  var ativ     = document.getElementById('ckAtiv').value;
+
+  var items = [
+    { i: '&#127964;', l: 'Mochila' },
+    { i: '&#128221;', l: 'Uniforme' },
+    { i: '&#128218;', l: 'Material escolar' },
+    { i: '&#128209;', l: 'Cadernos e agenda' },
+    { i: '&#128167;', l: 'Garrafinha de agua' },
+    { i: '&#127822;', l: 'Lanche' },
+    { i: '&#128203;', l: 'Tarefa de casa' }
+  ];
+
+  if (per === 'integral') { items.push({ i: '&#127857;', l: 'Almoco / marmita' }); }
+  if (idade <= 6)         { items.push({ i: '&#129528;', l: 'Objeto de conforto' }); }
+  if (idade >= 12)        { items.push({ i: '&#128241;', l: 'Carregador do celular' }); }
+
+  if (ativ) {
+    var extras = ativ.split(',');
+    for (var x = 0; x < extras.length; x++) {
+      var a = extras[x].trim();
+      if (a) { items.push({ i: '&#127939;', l: 'Material de ' + a }); }
+    }
+  }
+
+  var dayKey = 'ck_' + new Date().toDateString().replace(/ /g, '_');
+  var saved  = Store.get(dayKey) || {};
+  var perLabel = per === 'manha' ? 'Manha' : (per === 'tarde' ? 'Tarde' : 'Integral');
+
+  var html = '<div class="divider"></div>';
+  html += '<div class="muted mb8" style="font-size:.75rem">' + items.length + ' itens - ' + perLabel + '</div>';
+
+  for (var j = 0; j < items.length; j++) {
+    var item  = items[j];
+    var done  = saved[j] ? ' done' : '';
+    var check = saved[j] ? '&#10003;' : '';
+    html += '<div class="cl-item' + done + '" onclick="toggleCk(this,\'' + dayKey + '\',' + j + ')">';
+    html += '<div class="cl-box">' + check + '</div>';
+    html += '<span class="cl-ico">' + item.i + '</span>';
+    html += '<span class="cl-label">' + item.l + '</span>';
+    html += '</div>';
+  }
+
+  html += '<button class="btn btn-outline btn-sm mt8" onclick="resetCk(\'' + dayKey + '\')">Resetar lista</button>';
+  document.getElementById('ckResult').innerHTML = html;
+}
+
+function toggleCk(el, key, idx) {
+  el.classList.toggle('done');
+  var done = el.classList.contains('done');
+  el.querySelector('.cl-box').innerHTML = done ? '&#10003;' : '';
+  var s   = Store.get(key) || {};
+  s[idx]  = done;
+  Store.set(key, s);
+}
+
+function resetCk(key) {
+  Store.set(key, {});
+  document.querySelectorAll('.cl-item').forEach(function(el) {
+    el.classList.remove('done');
+    el.querySelector('.cl-box').innerHTML = '';
+  });
+  toast('Lista resetada!');
+}
+
+// ============================================================
+// CRIANCA
+// ============================================================
+function loadCrianca() {
+  var c = Store.get('crianca');
+  if (!c) return;
+  var fields = ['cNome', 'cNasc', 'cEscola', 'cAlerg', 'cMed', 'cObs'];
+  for (var i = 0; i < fields.length; i++) {
+    var el = document.getElementById(fields[i]);
+    if (el && c[fields[i]]) el.value = c[fields[i]];
+  }
+}
+
+function salvarCrianca() {
+  var c = {};
+  var fields = ['cNome', 'cNasc', 'cEscola', 'cAlerg', 'cMed', 'cObs'];
+  for (var i = 0; i < fields.length; i++) {
+    var el = document.getElementById(fields[i]);
+    if (el) c[fields[i]] = el.value;
+  }
+  Store.set('crianca', c);
+  var msg = document.getElementById('criancaSavedMsg');
+  if (msg) {
+    msg.innerHTML = '<div style="background:var(--mint);border-radius:var(--r2);padding:12px;margin-top:10px;font-size:.82rem;font-weight:600;color:var(--teal)">Salvo com sucesso!</div>';
+  }
+  toast('Informacoes salvas!');
+}
+
+// ============================================================
+// ORIENTACOES
+// ============================================================
+var ORIENTS = [
+  {
+    t: 'Febre',
+    b: 'Mantenha a crianca hidratada, ofereça bastante liquido e garanta repouso. Use roupas leves e ambiente arejado. Antipiretico somente com orientacao medica.',
+    a: 'Febre acima de 39 graus, bebes menores de 3 meses, febre ha mais de 3 dias ou convulsoes.'
+  },
+  {
+    t: 'Enjoo e Diarreia',
+    b: 'Hidratacao e prioridade. Ofereça liquidos em pequenas quantidades com frequencia. Soro de reidratacao oral e muito eficaz. Evite alimentos gordurosos.',
+    a: 'Sinais de desidratacao (boca seca, sem lagrimas), sangue nas fezes ou vomitos por mais de 24h.'
+  },
+  {
+    t: 'Resfriado e Gripe',
+    b: 'Repouso, hidratacao e higiene nasal com soro fisiologico ajudam bastante. Ambiente limpo e arejado acelera a recuperacao.',
+    a: 'Dificuldade para respirar, febre persistente ou sintomas piorando apos 5 dias.'
+  },
+  {
+    t: 'Dor de Cabeca',
+    b: 'Verifique hidratacao e descanso. Ambiente calmo com pouca luz ajuda. Compressa fria na testa pode trazer alivio.',
+    a: 'Dor intensa de inicio subito, rigidez no pescoco, febre alta ou alteracoes visuais.'
+  },
+  {
+    t: 'Quedas e Machucados',
+    b: 'Limpe o ferimento com agua e sabao. Para cortes pequenos, pressione para estancar o sangramento. Observe a crianca com atencao.',
+    a: 'Perda de consciencia, vomito apos queda na cabeca ou sonolencia excessiva.'
+  }
+];
+
+function renderOrient() {
+  var el = document.getElementById('orientList');
+  if (!el) return;
+  var html = '';
+  for (var i = 0; i < ORIENTS.length; i++) {
+    var o = ORIENTS[i];
+    html += '<div class="orient-row" id="or' + i + '">';
+    html += '<button class="orient-head" onclick="togOrient(' + i + ')">' + o.t + ' <span id="orarr' + i + '">&#9660;</span></button>';
+    html += '<div class="orient-body">';
+    html += '<p>' + o.b + '</p>';
+    html += '<span class="alert-chip">Atencao: ' + o.a + '</span>';
+    html += '<p style="margin-top:10px;font-size:.75rem;color:var(--text3);font-style:italic">Consulte sempre um medico para diagnostico adequado.</p>';
+    html += '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function togOrient(i) {
+  var r    = document.getElementById('or' + i);
+  var open = r.classList.toggle('open');
+  var arr  = document.getElementById('orarr' + i);
+  if (arr) arr.innerHTML = open ? '&#9650;' : '&#9660;';
+}
+
+// ============================================================
+// MODO CORRERIA
+// ============================================================
+function modoCorreria() {
+  var agenda     = Store.get('agenda') || [];
+  var today      = new Date().toDateString();
+  var todayItems = agenda.filter(function(a) {
+    try { return new Date(a.d).toDateString() === today; } catch(e) { return false; }
+  });
+
+  var tasks = [
+    { i: '&#128293;', t: 'Verificar checklist da mochila' },
+    { i: '&#128167;', t: 'Tomar agua - voce esquece de si mesmo(a)!' },
+    { i: '&#127800;', t: 'Respirar fundo por 30 segundos' },
+    { i: '&#128241;', t: 'Verificar mensagens urgentes' }
+  ];
+
+  for (var x = 0; x < todayItems.length; x++) {
+    tasks.splice(2, 0, { i: '&#128197;', t: 'Compromisso: ' + todayItems[x].t });
+  }
+
+  var tasksHtml = '';
+  var limit = Math.min(tasks.length, 5);
+  for (var j = 0; j < limit; j++) {
+    var tk = tasks[j];
+    tasksHtml += '<div style="display:flex;gap:10px;align-items:center;padding:9px;background:rgba(255,255,255,.55);border-radius:10px;margin-bottom:6px;font-size:.85rem;font-weight:500">';
+    tasksHtml += '<span>' + tk.i + '</span><span>' + escHtml(tk.t) + '</span>';
+    tasksHtml += '</div>';
+  }
+
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:flex;align-items:flex-end;justify-content:center';
+
+  var panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:28px 28px 0 0;padding:24px 20px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto';
+
+  panel.innerHTML =
+    '<div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="float:right;background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem">&#10005;</button>' +
+    '<div style="font-family:\'DM Serif Display\',serif;font-size:1.2rem;margin-bottom:4px">Modo Correria</div>' +
+    '<div style="font-size:.8rem;color:var(--text3);margin-bottom:16px">Ok, respira. Aqui esta o que importa agora:</div>' +
+    '<div style="background:linear-gradient(135deg,var(--peach),var(--rose));border-radius:var(--r);padding:16px;margin-bottom:12px">' + tasksHtml + '</div>' +
+    '<div style="text-align:center;padding:12px 0;font-size:.82rem;color:var(--text2);font-style:italic;font-family:\'DM Serif Display\',serif">Uma coisa de cada vez. Voce consegue.</div>';
+
+  overlay.appendChild(panel);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+// ============================================================
+// RESPIRA
+// ============================================================
+var PHRASES = [
+  'Voce esta fazendo o melhor que pode. E isso e o suficiente.',
+  'Ser pai ou mae e o trabalho mais importante do mundo. Voce esta arrasando!',
+  'Nem sempre vai ser perfeito. O que importa e a presenca.',
+  'Cuide-se tambem. Voce nao pode cuidar dos outros estando vazio(a).',
+  'Uma familia organizada comeca com pequenos passos. Voce ja esta no caminho.',
+  'Seu filho nao precisa de perfeicao. Precisa de voce, presente e amoroso(a).',
+  'Esta fase vai passar. Voce e mais forte do que pensa.',
+  'Pequenas ajudas fazem grandes diferencas no dia a dia. Voce ja esta aqui.'
+];
+
+function newPhrase() {
+  var el = document.getElementById('breathPhrase');
+  if (el) el.textContent = PHRASES[Math.floor(Math.random() * PHRASES.length)];
+}
+
+var breathInterval = null;
+var breathIdx      = 0;
+var BREATH_STEPS   = [
+  { e: '&#128566;', s: 'Inspire devagar... (4 segundos)' },
+  { e: '&#128523;', s: 'Segure o ar... (4 segundos)' },
+  { e: '&#128558;', s: 'Expire devagar... (4 segundos)' },
+  { e: '&#128522;', s: 'Descanse... (2 segundos)' }
+];
+
+function toggleBreath() {
+  var btn  = document.getElementById('breathBtn');
+  var orbEl = document.getElementById('breathOrb');
+  var stepEl = document.getElementById('breathStep');
+
+  if (breathInterval) {
+    clearInterval(breathInterval);
+    breathInterval = null;
+    if (btn)  btn.textContent  = 'Iniciar';
+    if (stepEl) stepEl.textContent = 'Toque para comecar';
+    return;
+  }
+
+  if (btn) btn.textContent = 'Pausar';
+
+  function doStep() {
+    var step = BREATH_STEPS[breathIdx % BREATH_STEPS.length];
+    if (orbEl)  orbEl.innerHTML  = step.e;
+    if (stepEl) stepEl.textContent = step.s;
+    breathIdx++;
+  }
+
+  doStep();
+  breathInterval = setInterval(doStep, 4000);
+}
+
+function reorganizar() {
+  var txt = document.getElementById('prioTxt').value.trim();
+  if (!txt) { toast('Escreva suas prioridades primeiro'); return; }
+
+  var lines   = txt.split('\n').filter(function(l) { return l.trim() !== ''; });
+  var icons   = ['&#128293;', '&#9889;', '&#128204;'];
+  var labels  = ['Urgente agora', 'Importante', 'Pode esperar'];
+
+  var rows = '';
+  for (var i = 0; i < lines.length; i++) {
+    rows +=
+      '<div style="background:rgba(255,255,255,.65);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start">' +
+      '<span style="font-size:1.2rem">' + (icons[i] || '&#128204;') + '</span>' +
+      '<div>' +
+      '<div style="font-size:.68rem;font-weight:700;color:var(--blue-d);text-transform:uppercase;letter-spacing:.05em">' + (labels[i] || 'Pendente') + '</div>' +
+      '<div style="font-size:.85rem;font-weight:500;margin-top:2px">' + escHtml(lines[i]) + '</div>' +
+      '</div></div>';
+  }
+
+  var result = document.getElementById('prioResult');
+  if (result) {
+    result.innerHTML =
+      '<div style="background:linear-gradient(135deg,var(--sky),var(--lilac));border-radius:var(--r);padding:16px">' +
+      '<div style="font-family:\'DM Serif Display\',serif;font-size:.95rem;margin-bottom:10px;color:var(--text)">Suas prioridades organizadas:</div>' +
+      rows +
+      '<div style="text-align:center;font-size:.78rem;color:var(--purple);font-style:italic;margin-top:10px">Uma coisa de cada vez.</div>' +
+      '</div>';
+  }
+  toast('Prioridades organizadas!');
+}
+
+// ============================================================
+// CHAT IA
+// ============================================================
+var QA_MAP = [
+  { k: ['emergencia', 'sos', 'socorro', 'ajuda'],        r: 'O botao SOS compartilha sua localizacao e envia um alerta de emergencia via WhatsApp. So toque e o sistema cuida do resto.' },
+  { k: ['chegou', 'cheguei', 'bem'],                     r: 'O "Cheguei Bem" avisa rapidamente sua familia que voce chegou com seguranca. Voce pode personalizar o nome e o numero de destino, e incluir localizacao.' },
+  { k: ['agenda', 'compromisso', 'consulta', 'vacina'],  r: 'Na area de Rotina voce encontra a Agenda Familiar. Adicione consultas, vacinas, remedios e compromissos escolares. Tudo fica salvo no seu dispositivo.' },
+  { k: ['mochila', 'checklist', 'escola', 'lanche'],     r: 'O Checklist da Mochila gera automaticamente uma lista pela idade e periodo escolar do seu filho. Va em Rotina e preencha os dados.' },
+  { k: ['correria', 'caos', 'estressado', 'pesado'],     r: 'O botao "Meu dia virou caos!" aparece na tela inicial. Ao tocar, o sistema organiza suas prioridades do momento de forma simples.' },
+  { k: ['filho', 'crianca', 'alergia', 'medicamento'],   r: 'Na area Criancas voce salva informacoes importantes do seu filho como escola, alergias e medicamentos. Tambem ha orientacoes de saude rapidas.' },
+  { k: ['personaliz', 'adaptar', 'empresa', 'custom'],   r: 'Voce pode solicitar uma versao personalizada do sistema para sua familia ou empresa na aba Contato. Criamos solucoes sob medida!' },
+  { k: ['respira', 'estresse', 'ansiedade', 'calma'],    r: 'A area "Mae/Pai Respira" tem exercicio de respiracao guiado, frases de apoio e um organizador de prioridades para quando o dia estiver pesado.' },
+  { k: ['status', 'onde', 'localizacao'],                r: 'Na tela de Seguranca voce atualiza rapidamente onde cada membro da familia esta: em casa, na escola, no curso ou em transito.' },
+  { k: ['salvar', 'dados', 'local', 'offline'],          r: 'O BH Family Control salva tudo no seu proprio dispositivo sem precisar de internet ou cadastro. Seus dados ficam guardados localmente.' }
+];
+
+var DEFAULT_RESPS = [
+  'Boa pergunta! Para mais detalhes explore as abas do menu inferior ou entre em contato pelo botao no topo.',
+  'Nao encontrei uma resposta especifica, mas qualquer duvida pode ser enviada pela area de Contato. Respondemos rapido!',
+  'Se precisar de algo mais personalizado, fale conosco pela area de Contato!'
+];
+
+var chatInitialized = false;
+
+function initChat() {
+  if (chatInitialized) return;
+  chatInitialized = true;
+  addBubble('Oi! Estou aqui para te ajudar com qualquer duvida sobre o BH Family Control.\n\nToque em uma das opcoes abaixo ou escreva sua pergunta!', 'bot');
+}
+
+function addBubble(msg, type) {
+  var cw = document.getElementById('chatWindow');
+  if (!cw) return;
+  var b = document.createElement('div');
+  b.className    = 'bubble ' + type;
+  b.textContent  = msg;
+  cw.appendChild(b);
+  setTimeout(function() { cw.scrollTop = cw.scrollHeight; }, 50);
+}
+
+function getReply(q) {
+  var ql = q.toLowerCase();
+  for (var i = 0; i < QA_MAP.length; i++) {
+    var entry = QA_MAP[i];
+    for (var j = 0; j < entry.k.length; j++) {
+      if (ql.indexOf(entry.k[j]) !== -1) return entry.r;
+    }
+  }
+  return DEFAULT_RESPS[Math.floor(Math.random() * DEFAULT_RESPS.length)];
+}
+
+function sendChat() {
+  var inp = document.getElementById('chatInput');
+  if (!inp) return;
+  var q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  askChat(q);
+}
+
+function askChat(q) {
+  if (!chatInitialized) initChat();
+  addBubble(q, 'user');
+
+  var cw = document.getElementById('chatWindow');
+  var typing = document.createElement('div');
+  typing.className   = 'bubble bot typing';
+  typing.textContent = 'Digitando...';
+  if (cw) { cw.appendChild(typing); cw.scrollTop = cw.scrollHeight; }
+
+  var reply = getReply(q);
+  setTimeout(function() {
+    if (typing.parentNode) typing.parentNode.removeChild(typing);
+    addBubble(reply, 'bot');
+  }, 700 + Math.floor(Math.random() * 400));
+}
+
+// ============================================================
+// CONTATO
+// ============================================================
+function enviarContato() {
+  var n = document.getElementById('ctNome').value.trim();
+  var w = document.getElementById('ctWpp').value.trim();
+  var e = document.getElementById('ctEmail').value.trim();
+  var t = document.getElementById('ctTipo').value;
+  var m = document.getElementById('ctMsg').value.trim();
+  if (!n || !m) { toast('Preencha nome e mensagem'); return; }
+  var texto =
+    'BH Family Control - Solicitacao\n\n' +
+    'Nome: ' + n + '\n' +
+    'WhatsApp: ' + (w || '-') + '\n' +
+    'Email: ' + (e || '-') + '\n' +
+    'Tipo: ' + t + '\n\n' +
+    'Mensagem:\n' + m;
+  window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+  toast('Solicitacao enviada!');
+}
+
+// ============================================================
+// UTILITY
+// ============================================================
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', function() {
+  initHero();
+  var splash = document.getElementById('splash');
+  setTimeout(function() {
+    if (splash) {
+      splash.classList.add('out');
+      setTimeout(function() {
+        if (splash.parentNode) splash.parentNode.removeChild(splash);
+      }, 700);
+    }
+  }, 1600);
+});
+</script>
+</body>
+</html>
